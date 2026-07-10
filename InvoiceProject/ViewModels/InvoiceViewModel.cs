@@ -104,7 +104,10 @@ public partial class InvoiceViewModel : ObservableObject
                     Edb = BuyerEdb,
                     Name = company.Name,
                     Street = company.Address?.Street ?? "",
-                    City = company.Address?.City ?? ""
+                    Number = company.Address?.Number ?? "-", // Handled securely
+                    City = company.Address?.City ?? "",
+                    Zip = company.Address?.Zip ?? "1000",
+                    CountryCode = company.CountryCode ?? "MK"
                 });
             }
         }
@@ -167,91 +170,157 @@ public partial class InvoiceViewModel : ObservableObject
             return;
         }
 
+        if (string.IsNullOrWhiteSpace(BuyerEdb))
+        {
+            StatusMessage = "Please select a buyer first!";
+            return;
+        }
+
         try
         {
-            StatusMessage = "Signing and Submitting to UJP...";
-            string officialTimestamp = await _ujpService.GetServerTimestampAsync();
+            StatusMessage = "Preparing submission...";
+            var buyerRecord = await _databaseService.GetClientByEdbAsync(BuyerEdb);
             
-            // 1. Get the permanent Seller Settings we saved earlier
-            var seller = _settingsService.CurrentSettings; // Assuming you made the settings accessible
-
-            // 2. Build the Payload matching the API Schema exactly
-            var invoicePayload = new Invoice
+            if (buyerRecord == null)
             {
-                RequestTimestamp = officialTimestamp,
-                Document = new InvoiceDocument
+                StatusMessage = "Buyer address not found. Please click 'Lookup in UJP API' first to save their details.";
+                return;
+            }
+
+            string officialTimestamp = await _ujpService.GetServerTimestampAsync();
+            var seller = _settingsService.CurrentSettings;
+
+            // 1. THE FIX: Helper to translate your UI Dropdown into UJP API Codes
+            string GetApiTaxCode(string uiTaxIndicator) => uiTaxIndicator switch
+            {
+                "18%" => "DDV-A",
+                "5%" => "DDV-B",
+                _ => "DDV-G"
+            };
+
+            // 2. THE FIX: Dynamically build the VAT Totals block by grouping the items
+            var calculatedVatTotals = InvoiceItems
+                .GroupBy(i => GetApiTaxCode(i.TaxIndicator))
+                .Select(group => new
                 {
-                    Header = new InvoiceHeader
+                    vatTaxIndicator = group.Key,
+                    vatCode = group.Key,
+                    vatPercent = group.Key == "DDV-A" ? 18.0m : (group.Key == "DDV-B" ? 5.0m : 0.0m),
+                    vatTaxableAmount = group.Sum(i => i.RowNetTotal),
+                    vatAmount = group.Sum(i => i.RowVatAmount),
+                    vatTotalAmount = group.Sum(i => i.RowGrossTotal)
+                }).ToArray();
+
+            // 3. Build the Payload using the translated codes
+            var payload = new
+            {
+                requestTimestamp = officialTimestamp,
+                document = new
+                {
+                    header = new
                     {
-                        DocType = SelectedDocumentType,
-                        DocTypeName = "Фактура", // Added from console
-                        DocDate = InvoiceDate.ToString("yyyy-MM-dd"),
-                        DocTurnoverDate = TurnoverDate.ToString("yyyy-MM-dd"),
-                        DocNumber = InvoiceNumber,
-                        DocStorno = 0
+                        docStorno = 0,
+                        docType = SelectedDocumentType,
+                        docTypeName = "Фактура",
+                        docDate = InvoiceDate.ToString("yyyy-MM-dd"),
+                        docTurnoverDate = TurnoverDate.ToString("yyyy-MM-dd"),
+                        docNumber = InvoiceNumber,
+                        docId = Guid.NewGuid().ToString("N").Substring(0, 10) 
                     },
-                    Seller = new CompanyInfo
+                    seller = new
                     {
-                        CCode = "MK", CName = "Северна Македонија",
-                        Tin = seller.SellerEdb, Name = seller.SellerName,
-                        Address = new AddressDto { Street = seller.SellerStreet, City = seller.SellerCity }
+                        sellerCCode = "MK",
+                        sellerCName = "Северна Македонија",
+                        sellerTin = seller.SellerEdb,
+                        sellerVatNumber = "",
+                        sellerName = seller.SellerName,
+                        sellerAddress = new { streetAddress = seller.SellerStreet, streetNumber = "-", postalCode = "1000", city = seller.SellerCity }
                     },
-                    Buyer = new CompanyInfo
+                    buyer = new
                     {
-                        CCode = "MK", CName = "Северна Македонија",
-                        Tin = BuyerEdb, Name = BuyerName,
-                        Address = new AddressDto { Street = "Unknown", City = "Unknown" } // Update based on your DB if you save this
-                    },
-                    Payment = new DocPaymentDto
-                    {
-                        CurrencyDate = InvoiceDate.ToString("yyyy-MM-dd")
-                    },
-                    DocTotals = new DocTotals
-                    {
-                        NetAmount = NetAmount,
-                        VatAmount = VatAmount,
-                        GrossAmount = GrossAmount,
-                        GrossAmountR = Math.Round(GrossAmount, 0),
-                        FinalAmount = Math.Round(GrossAmount, 0)
-                    },
-                    VatTotals = new List<VatTotalDto>
-                    {
-                        // For DDV-G (No VAT). If you have mixed rates, you'll need to group by TaxIndicator
-                        new VatTotalDto
-                        {
-                            TaxIndicator = "DDV-G",
-                            VatCode = "DDV-G",
-                            VatPercent = 0.0m,
-                            TaxableAmount = NetAmount,
-                            Amount = 0.0m,
-                            TotalAmount = NetAmount
+                        buyerCCode = "MK",
+                        buyerCName = "Северна Македонија",
+                        buyerTin = buyerRecord.Edb,
+                        buyerVatNumber = "",
+                        buyerName = buyerRecord.Name,
+                        buyerAddress = new 
+                        { 
+                            streetAddress = string.IsNullOrWhiteSpace(buyerRecord.Street) ? "Б.Б." : buyerRecord.Street, 
+                            streetNumber = "-", 
+                            postalCode = "1000", 
+                            city = buyerRecord.City 
                         }
                     },
-                    DocItems = InvoiceItems.Select(item => new DocItemDto
+                    docPayment = new
                     {
-                        LineNo = item.LineNo,
-                        Desc = item.Desc,
-                        Qty = item.Qty,
+                        docPaymentTypeCode = "P11",
+                        docPaymentTypeDesc = "Плаќање со картичка",
+                        docCurrency = "MKD",
+                        docCurrencyCode = "MKD",
+                        docCurrencyDate = InvoiceDate.ToString("yyyy-MM-dd"),
+                        docCurrencyExchRate = 1
+                    },
+                    docItems = InvoiceItems.Select(item => new
+                    {
+                        docItemLineNo = item.LineNo,
+                        docItemSku = "SKU-" + item.LineNo,
+                        docItemDesc = item.Desc,
+                        docItemMUnit = "pcs",
+                        docItemQty = item.Qty,
                         
-                        // Map the console app's required pricing fields
-                        UnitOriginalPriceWoVat = item.UnitPrice,
-                        UnitPriceWoVat = item.UnitPrice,
-                        UnitVat = item.RowVatAmount > 0 ? (item.RowVatAmount / item.Qty) : 0,
-                        Vat = item.RowVatAmount > 0 ? (item.RowVatAmount / item.Qty) : 0,
-                        VatGroup = item.TaxIndicator,
+                        docItemUnitOriginalPriceWoVat = item.UnitPrice,
+                        docItemUnitDiscountAmount = 0, 
+                        docItemUnitPriceWoVat = item.UnitPrice,
                         
-                        TotalOriginalPriceWoVat = item.RowNetTotal,
-                        TotalPriceWoVat = item.RowNetTotal,
-                        TotalVat = item.RowVatAmount,
-                        TotalPriceWVat = item.RowGrossTotal,
-                        TaxIndicator = item.TaxIndicator
-                    }).ToList()
+                        docItemUnitVat = item.RowVatAmount > 0 ? (item.RowVatAmount / item.Qty) : 0,
+                        docItemVat = item.RowVatAmount > 0 ? (item.RowVatAmount / item.Qty) : 0,
+                        
+                        // Use the translator here!
+                        docItemVatGroup = GetApiTaxCode(item.TaxIndicator),
+                        
+                        docItemTotalOriginalPriceWoVat = item.RowNetTotal,
+                        docItemTotalPriceWoVat = item.RowNetTotal,
+                        docItemTotalVat = item.RowVatAmount,
+                        docItemTotalPriceWVat = item.RowGrossTotal,
+                        
+                        // Use the translator here!
+                        docItemTaxIndicator = GetApiTaxCode(item.TaxIndicator),
+                        
+                        docItemDomesticProduct = (string)null 
+                    }).ToArray(),
+                    docTotals = new
+                    {
+                        docNetAmount = NetAmount,
+                        docDiscountAmount = 0, 
+                        docNetAmountDisc = NetAmount, 
+                        
+                        docVatAmount = VatAmount,
+                        docGrossAmount = GrossAmount,
+                        docGrossAmountR = Math.Round(GrossAmount, 0),
+                        
+                        docAvansAmount = 0, 
+                        docFinalAmount = Math.Round(GrossAmount, 0)
+                    },
+                    // Plug in the dynamic calculation we built at the top!
+                    vatTotals = calculatedVatTotals 
                 }
             };
+            var debugOptions = new System.Text.Json.JsonSerializerOptions 
+            { 
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
+                WriteIndented = true 
+            };
+            string debugJson = System.Text.Json.JsonSerializer.Serialize(payload, debugOptions);
             
-            // 3. Send it through the encrypted pipeline
-            string result = await _ujpService.SubmitInvoiceAsync(invoicePayload);
+            Console.WriteLine("\n================= OUTGOING UJP PAYLOAD =================");
+            Console.WriteLine(debugJson);
             
+            System.Diagnostics.Debug.WriteLine("\n================= OUTGOING UJP PAYLOAD =================");
+            System.Diagnostics.Debug.WriteLine(debugJson);
+            // --- END DEBUG PRINT BLOCK ---
+
+            // Now send it...
+            string result = await _ujpService.SubmitInvoiceAsync(payload);
             StatusMessage = $"SUCCESS! Invoice Registered. UJP Response: {result}";
         }
         catch (Exception ex)

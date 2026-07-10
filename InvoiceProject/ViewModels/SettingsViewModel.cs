@@ -91,28 +91,46 @@ public partial class SettingsViewModel : ObservableObject
 
         try
         {
-            StatusMessage = "Verifying company with UJP...";
-            var company = await _ujpService.GetCompanyDetailsAsync(SellerEdb);
+            StatusMessage = "Applying certificate to system...";
 
-            var newSettings = new UserSettings
+            // 1. THE FIX: Save the Certificate and EDB immediately!
+            // This allows the UjpService to read it from the file when it makes the network call.
+            var initialSettings = new UserSettings
             {
                 CertPath = CertPath,
                 CertPassword = CertPassword,
-                CertThumbprint = CertThumbprint, // Save the thumbprint
+                CertThumbprint = CertThumbprint,
                 EujpId = EujpId,
-                SellerEdb = SellerEdb,
-                SellerName = company?.Name ?? "Unknown",
-                SellerStreet = company?.Address?.Street ?? "",
-                SellerCity = company?.Address?.City ?? ""
+                SellerEdb = SellerEdb
             };
-            
-            _settingsService.SaveSettings(newSettings);
+            _settingsService.SaveSettings(initialSettings);
 
+            StatusMessage = "Verifying company with UJP...";
+
+            // 2. Now the API call will succeed because the cert is saved
+            var company = await _ujpService.GetCompanyDetailsAsync(SellerEdb);
+
+            // 3. Update the settings object with the real production address data
+            initialSettings.SellerName = company?.Name ?? "Unknown";
+            initialSettings.SellerStreet = company?.Address?.Street ?? "";
+            initialSettings.SellerNumber = company?.Address?.Number ?? "-"; // Saved permanently
+            initialSettings.SellerCity = company?.Address?.City ?? "";
+            initialSettings.SellerZip = company?.Address?.Zip ?? "1000";
+            
+            // 4. Save the completed profile
+            _settingsService.SaveSettings(initialSettings);
+
+            StatusMessage = "Setup Complete!";
+            
+            // Close the window so App.xaml.cs can launch the Main Window
             CloseAction?.Invoke();
         }
         catch (Exception ex)
         {
             StatusMessage = $"Verification Failed: {ex.Message}";
+            
+            // Force it to print to Rider so you can see if the cert password was wrong, etc.
+            System.Diagnostics.Debug.WriteLine($"[SETUP ERROR]: {ex.Message}");
         }
     }
 }

@@ -6,5 +6,5 @@ public interface IUjpService
 {
     Task<CompanyDto> GetCompanyDetailsAsync(string edb);
     Task<string> GetServerTimestampAsync();
-    Task<string> SubmitInvoiceAsync(Invoice invoice);
+    Task<string> SubmitInvoiceAsync(object invoicePayload);
 }

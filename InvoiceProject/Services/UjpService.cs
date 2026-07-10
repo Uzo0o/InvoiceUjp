@@ -56,14 +56,36 @@ public class UjpService : IUjpService
     // Company lookup works over standard HTTP without transport certs
     public async Task<CompanyDto> GetCompanyDetailsAsync(string edb)
     {
-        var response = await _baseHttpClient.GetAsync($"einvoice_api/api/v1/companies/{edb}");
-        response.EnsureSuccessStatusCode();
+        var settings = _settingsService.CurrentSettings;
+        using X509Certificate2 cert = GetUserCertificate();
+        
+        var handler = new HttpClientHandler();
+        handler.ClientCertificates.Add(cert);
 
-        var wrapper = await response.Content.ReadFromJsonAsync<CompanyResponse>();
-        return wrapper.Company;
+        using var client = new HttpClient(handler);
+        client.BaseAddress = new Uri(_config["UjpSettings:BaseUrl"] ?? "https://efakturatest.ujp.gov.mk");
+
+        client.DefaultRequestHeaders.Clear();
+        client.DefaultRequestHeaders.Add("X-EDB", settings.SellerEdb);
+        client.DefaultRequestHeaders.Add("X-EUJP-ID", settings.EujpId);
+
+        string path = $"einvoice_api/api/v1/companies/{edb}";
+
+        var response = await client.GetAsync(path);
+        string content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"UJP Lookup Error {(int)response.StatusCode}: {content}");
+        }
+
+        var wrapper = JsonSerializer.Deserialize<CompanyResponse>(content, 
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            
+        return wrapper?.Company ?? throw new Exception("Failed to deserialize company data.");
     }
 
-    public async Task<string> SubmitInvoiceAsync(Invoice invoice)
+    public async Task<string> SubmitInvoiceAsync(object invoice)
     {
         try
         {
