@@ -6,10 +6,11 @@ public class ClientRecord
 {
     [PrimaryKey, MaxLength(15)]
     public string Edb { get; set; } = string.Empty;
+    public string VatNumber { get; set; } = string.Empty;  // NEW
     public string Name { get; set; } = string.Empty;
     public string Street { get; set; } = string.Empty;
-    public string Number { get; set; } = string.Empty; // NEW
+    public string Number { get; set; } = string.Empty; 
     public string City { get; set; } = string.Empty;
-    public string Zip { get; set; } = string.Empty;        // NEW
-    public string CountryCode { get; set; } = "MK";        // NEW
+    public string Zip { get; set; } = string.Empty;        
+    public string CountryCode { get; set; } = "MK";        
 }

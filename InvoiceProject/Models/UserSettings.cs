@@ -10,8 +10,9 @@ public class UserSettings
     
     // Cached UJP Data
     public string SellerName { get; set; } = string.Empty;
+    public string SellerVatNumber { get; set; } = string.Empty; // NEW
     public string SellerStreet { get; set; } = string.Empty;
-    public string SellerNumber { get; set; } = string.Empty; // NEW
+    public string SellerNumber { get; set; } = string.Empty; 
     public string SellerCity { get; set; } = string.Empty;
-    public string SellerZip { get; set; } = string.Empty;    // NEW
+    public string SellerZip { get; set; } = string.Empty;    
 }

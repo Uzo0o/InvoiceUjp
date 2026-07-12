@@ -13,6 +13,7 @@ public partial class InvoiceViewModel : ObservableObject
     private readonly IUserSettingsService _settingsService;
 
     public ObservableCollection<ClientRecord> SearchResults { get; } = new();
+    public ObservableCollection<ClientRecord> AllClients { get; } = new();
     
     [ObservableProperty] private string _searchQuery;
     [ObservableProperty] private ClientRecord _selectedClient;
@@ -51,6 +52,25 @@ public partial class InvoiceViewModel : ObservableObject
         _databaseService = databaseService;
         _settingsService = settingsService;
         InitializeHeaderDefaults();
+
+        _ = LoadAllClientsAsync();
+    }
+
+    [RelayCommand]
+    public async Task LoadAllClients()
+    {
+        var clients = await _databaseService.GetAllClientsAsync();
+        AllClients.Clear();
+        foreach(var c in clients) AllClients.Add(c);
+    }
+    private async Task LoadAllClientsAsync()
+    {
+        var clients = await _databaseService.GetAllClientsAsync();
+        AllClients.Clear();
+        foreach (var c in clients)
+        {
+            AllClients.Add(c);
+        }
     }
     [RelayCommand]
     private async Task SearchLocalClientsAsync()
@@ -102,13 +122,15 @@ public partial class InvoiceViewModel : ObservableObject
                 await _databaseService.SaveClientAsync(new ClientRecord 
                 {
                     Edb = BuyerEdb,
+                    VatNumber = company.VatNumber ?? "", // SAVED
                     Name = company.Name,
                     Street = company.Address?.Street ?? "",
-                    Number = company.Address?.Number ?? "-", // Handled securely
+                    Number = company.Address?.Number ?? "-", 
                     City = company.Address?.City ?? "",
                     Zip = company.Address?.Zip ?? "1000",
                     CountryCode = company.CountryCode ?? "MK"
                 });
+                await  LoadAllClientsAsync();
             }
         }
         catch (Exception ex)
@@ -130,18 +152,19 @@ public partial class InvoiceViewModel : ObservableObject
             UnitPrice = 0.0m
         };
 
-        // THE MAGIC: Subscribe to the item's property changes
+        // THE FIX: Listen to the Qty and UnitPrice so the ViewModel actually does the math!
         newItem.PropertyChanged += (sender, args) =>
         {
-            // If the user changes Qty or UnitPrice, RowTotal updates, so we recount everything
-            if (args.PropertyName == nameof(DocItem.TaxIndicator))
+            if (args.PropertyName == nameof(DocItem.TaxIndicator) ||
+                args.PropertyName == nameof(DocItem.UnitPrice) ||
+                args.PropertyName == nameof(DocItem.Qty))
             {
                 RecalculateTotals();
             }
         };
 
         InvoiceItems.Add(newItem);
-        RecalculateTotals(); // Calculate immediately when added
+        RecalculateTotals(); 
     }
     
     
@@ -210,6 +233,8 @@ public partial class InvoiceViewModel : ObservableObject
                     vatAmount = group.Sum(i => i.RowVatAmount),
                     vatTotalAmount = group.Sum(i => i.RowGrossTotal)
                 }).ToArray();
+            
+            RecalculateTotals();
 
             // 3. Build the Payload using the translated codes
             var payload = new
@@ -232,22 +257,26 @@ public partial class InvoiceViewModel : ObservableObject
                         sellerCCode = "MK",
                         sellerCName = "Северна Македонија",
                         sellerTin = seller.SellerEdb,
-                        sellerVatNumber = "",
+                        
+                        sellerVatNumber = seller.SellerVatNumber, // INJECTED
+                        
                         sellerName = seller.SellerName,
-                        sellerAddress = new { streetAddress = seller.SellerStreet, streetNumber = "-", postalCode = "1000", city = seller.SellerCity }
+                        sellerAddress = new { streetAddress = seller.SellerStreet, streetNumber = seller.SellerNumber, postalCode = seller.SellerZip, city = seller.SellerCity }
                     },
                     buyer = new
                     {
                         buyerCCode = "MK",
                         buyerCName = "Северна Македонија",
                         buyerTin = buyerRecord.Edb,
-                        buyerVatNumber = "",
+                        
+                        buyerVatNumber = buyerRecord.VatNumber, // INJECTED
+                        
                         buyerName = buyerRecord.Name,
                         buyerAddress = new 
                         { 
                             streetAddress = string.IsNullOrWhiteSpace(buyerRecord.Street) ? "Б.Б." : buyerRecord.Street, 
-                            streetNumber = "-", 
-                            postalCode = "1000", 
+                            streetNumber = string.IsNullOrWhiteSpace(buyerRecord.Number) ? "-" : buyerRecord.Number, 
+                            postalCode = string.IsNullOrWhiteSpace(buyerRecord.Zip) ? "1000" : buyerRecord.Zip, 
                             city = buyerRecord.City 
                         }
                     },
@@ -290,19 +319,18 @@ public partial class InvoiceViewModel : ObservableObject
                     }).ToArray(),
                     docTotals = new
                     {
-                        docNetAmount = NetAmount,
-                        docDiscountAmount = 0, 
-                        docNetAmountDisc = NetAmount, 
-                        
-                        docVatAmount = VatAmount,
-                        docGrossAmount = GrossAmount,
-                        docGrossAmountR = Math.Round(GrossAmount, 0),
-                        
-                        docAvansAmount = 0, 
-                        docFinalAmount = Math.Round(GrossAmount, 0)
+                        docNetAmount = Math.Round(NetAmount, 2),
+                        docDiscountAmount = 0,
+                        docNetAmountDisc = Math.Round(NetAmount, 2),
+                        docVatAmount = Math.Round(VatAmount, 2),
+                        docGrossAmount = Math.Round(GrossAmount, 2),
+                        // ОВА Е КЛУЧНО: Мора да биде цел број (int) без децимали
+                        docGrossAmountR = (int)Math.Round(GrossAmount, MidpointRounding.AwayFromZero),
+                        docAvansAmount = 0,
+                        docFinalAmount = Math.Round(GrossAmount, 2)
                     },
                     // Plug in the dynamic calculation we built at the top!
-                    vatTotals = calculatedVatTotals 
+                    vatTotals = calculatedVatTotals
                 }
             };
             var debugOptions = new System.Text.Json.JsonSerializerOptions 

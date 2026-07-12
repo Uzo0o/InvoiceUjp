@@ -43,4 +43,9 @@ public class DatabaseService : IDatabaseService
         return await _db.Table<ClientRecord>()
             .FirstOrDefaultAsync(c => c.Edb == edb);
     }
+
+    public async Task<List<ClientRecord>> GetAllClientsAsync()
+    {
+        return await _db.Table<ClientRecord>().OrderBy(c => c.Name).ToListAsync();
+    }
 }

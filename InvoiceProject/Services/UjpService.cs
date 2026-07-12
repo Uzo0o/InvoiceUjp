@@ -72,7 +72,10 @@ public class UjpService : IUjpService
         string path = $"einvoice_api/api/v1/companies/{edb}";
 
         var response = await client.GetAsync(path);
-        string content = await response.Content.ReadAsStringAsync();
+        
+        // THE UTF-8 FIX: Read raw bytes and forcefully decode them as UTF-8
+        byte[] contentBytes = await response.Content.ReadAsByteArrayAsync();
+        string content = Encoding.UTF8.GetString(contentBytes);
 
         if (!response.IsSuccessStatusCode)
         {

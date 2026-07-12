@@ -112,8 +112,9 @@ public partial class SettingsViewModel : ObservableObject
 
             // 3. Update the settings object with the real production address data
             initialSettings.SellerName = company?.Name ?? "Unknown";
+            initialSettings.SellerVatNumber = company?.VatNumber ?? ""; // SAVED
             initialSettings.SellerStreet = company?.Address?.Street ?? "";
-            initialSettings.SellerNumber = company?.Address?.Number ?? "-"; // Saved permanently
+            initialSettings.SellerNumber = company?.Address?.Number ?? "-"; 
             initialSettings.SellerCity = company?.Address?.City ?? "";
             initialSettings.SellerZip = company?.Address?.Zip ?? "1000";
             

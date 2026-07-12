@@ -1,25 +1,36 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using InvoiceProject.Services;
-using InvoiceProject.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System.Windows;
 
 namespace InvoiceProject;
 
-
 public partial class MainWindow : Window
 {
-    public MainWindow(InvoiceViewModel viewModel)
+    public MainWindow(ViewModels.InvoiceViewModel viewModel)
     {
         InitializeComponent();
         DataContext = viewModel;
+    }
+
+    private void Minimize_Click(object sender, RoutedEventArgs e)
+    {
+        this.WindowState = WindowState.Minimized;
+    }
+
+    private void Maximize_Click(object sender, RoutedEventArgs e)
+    {
+        if (this.WindowState == WindowState.Normal)
+        {
+            this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+            this.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
+            this.WindowState = WindowState.Maximized;
+        }
+        else
+        {
+            this.WindowState = WindowState.Normal;
+        }
+    }
+
+    private void Close_Click(object sender, RoutedEventArgs e)
+    {
+        this.Close();
     }
 }
