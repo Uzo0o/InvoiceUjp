@@ -4,121 +4,122 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="700" d:DesignWidth="1000">
+             d:DesignHeight="720" d:DesignWidth="1050"
+             Background="Transparent">
 
-    <Grid Margin="30">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="350" /> 
-            <ColumnDefinition Width="40" />  
-            <ColumnDefinition Width="*" />   
-        </Grid.ColumnDefinitions>
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/> <RowDefinition Height="*"/>    </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Padding="0,0,15,0">
-            <StackPanel>
-                
-                <TextBlock Text="Invoice Header Details" Style="{StaticResource EmphasizedText}" FontSize="18" Margin="0,0,0,15"/>
-                
-                <Grid Margin="0,0,0,25">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Create Invoice" FontSize="22" FontWeight="Bold" Foreground="#1F2937" Margin="0,0,0,16"/>
 
-                    <Label Content="Invoice Number:" Grid.Row="0" Grid.Column="0"/>
-                    <TextBox Text="{Binding InvoiceNumber, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="0" Margin="0,0,10,15"/>
+        <Border Grid.Row="1" Background="White" CornerRadius="12" Padding="20" Margin="0,0,0,20">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.03" Direction="270" Color="Black"/>
+            </Border.Effect>
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2.5*"/> <ColumnDefinition Width="3.5*"/> <ColumnDefinition Width="1*"/>   </Grid.ColumnDefinitions>
 
-                    <Label Content="Doc Type:" Grid.Row="0" Grid.Column="1" Margin="10,0,0,0"/>
-                    <ComboBox SelectedValuePath="Tag" SelectedValue="{Binding SelectedDocumentType}" Grid.Row="1" Grid.Column="1" Margin="10,0,0,15">
-                        <ComboBoxItem Content="Standard Invoice (100)" Tag="100" IsSelected="True"/>
-                        <ComboBoxItem Content="Credit Note (380)" Tag="380"/>
-                        <ComboBoxItem Content="Debit Note (383)" Tag="383"/>
-                    </ComboBox>
-
-                    <Label Content="Issue Date:" Grid.Row="2" Grid.Column="0"/>
-                    <DatePicker SelectedDate="{Binding InvoiceDate}" Grid.Row="3" Grid.Column="0" Margin="0,0,10,10" Height="38"/>
-
-                    <Label Content="Turnover Date:" Grid.Row="2" Grid.Column="1" Margin="10,0,0,0"/>
-                    <DatePicker SelectedDate="{Binding TurnoverDate}" Grid.Row="3" Grid.Column="1" Margin="10,0,0,10" Height="38"/>
-                </Grid>
-
-                <TextBlock Text="Buyer Information" Style="{StaticResource EmphasizedText}" FontSize="18" Margin="0,0,0,15"/>
-                
-                <Label Content="Select Saved Client:"/>
-                <ComboBox ItemsSource="{Binding AllClients}" 
-                          SelectedItem="{Binding SelectedClient}" 
-                          DisplayMemberPath="Name" 
-                          IsEditable="True" 
-                          IsTextSearchEnabled="True" 
-                          Margin="0,0,0,20"/>
-
-                <StackPanel Margin="0,0,0,20">
-                    <Label Content="Official UJP Name:"/>
-                    <TextBox Text="{Binding BuyerName}" IsReadOnly="True" Margin="0,0,0,15"/>
-
+                <StackPanel Grid.Column="0" Margin="0,0,24,0">
+                    <TextBlock Text="Document Details" FontSize="15" FontWeight="SemiBold" Foreground="#374151" Margin="0,0,0,12"/>
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        
-                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                            <Label Content="EDB (Tax Number):"/>
-                            <TextBox Text="{Binding BuyerEdb, UpdateSourceTrigger=PropertyChanged}" />
-                        </StackPanel>
 
-                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                            <Label Content="City:"/>
-                            <TextBox Text="{Binding SelectedClient.City}" IsReadOnly="True" />
+                        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,12,12">
+                            <Label Content="Invoice No."/>
+                            <TextBox Text="{Binding InvoiceNumber, UpdateSourceTrigger=PropertyChanged}" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="1"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,12">
+                            <Label Content="Doc Type"/>
+                            <ComboBox SelectedValuePath="Tag" SelectedValue="{Binding SelectedDocumentType}" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="1">
+                                <ComboBoxItem Content="100" Tag="100" IsSelected="True"/>
+                                <ComboBoxItem Content="380" Tag="380"/>
+                                <ComboBoxItem Content="383" Tag="383"/>
+                            </ComboBox>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,12,0">
+                            <Label Content="Issue Date"/>
+                            <DatePicker SelectedDate="{Binding InvoiceDate}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="1">
+                            <Label Content="Turnover Date"/>
+                            <DatePicker SelectedDate="{Binding TurnoverDate}"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
 
-                <TextBlock Text="- OR LOOKUP NEW CLIENT EDB VIA UJP -" HorizontalAlignment="Center" Foreground="{StaticResource BrandTeal}" Opacity="0.7" Margin="0,0,0,15" FontSize="11" FontWeight="Bold"/>
-                
-                <Button Content="Search UJP API" Command="{Binding LookupCompanyCommand}" Style="{StaticResource PrimaryActionBtn}" Margin="0,0,0,20"/>
+                <StackPanel Grid.Column="1" Margin="0,0,24,0">
+                    <TextBlock Text="Buyer Information" FontSize="15" FontWeight="SemiBold" Foreground="#374151" Margin="0,0,0,12"/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource BrandTeal}" FontWeight="Bold" TextWrapping="Wrap" Margin="0,0,0,15"/>
-                
-                <Button Content="SUBMIT INVOICE" 
-                        Command="{Binding SubmitInvoiceCommand}" 
-                        Style="{StaticResource PrimaryActionBtn}"
-                        FontSize="16" 
-                        Margin="0,10,0,20" />
-            </StackPanel>
-        </ScrollViewer>
+                        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,12,12">
+                            <Label Content="Select Saved Client"/>
+                            <ComboBox ItemsSource="{Binding AllClients}" SelectedItem="{Binding SelectedClient}" DisplayMemberPath="Name" IsEditable="True" IsTextSearchEnabled="True" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="1"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,12">
+                            <Label Content="EDB (Tax No.)"/>
+                            <TextBox Text="{Binding BuyerEdb, UpdateSourceTrigger=PropertyChanged}" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="1"/>
+                        </StackPanel>
 
-        <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,12,0">
+                            <Label Content="Official Name"/>
+                            <TextBox Text="{Binding BuyerName}" IsReadOnly="True" Background="#F3F4F6" BorderBrush="#E5E7EB" BorderThickness="1"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="2">
+                            <Label Content="City"/>
+                            <TextBox Text="{Binding SelectedClient.City}" IsReadOnly="True" Background="#F3F4F6" BorderBrush="#E5E7EB" BorderThickness="1"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
 
-            <TextBlock Text="Invoice Line Items" Style="{StaticResource EmphasizedText}" FontSize="18" Margin="0,0,0,15" Grid.Row="0"/>
+                <StackPanel Grid.Column="2" VerticalAlignment="Bottom">
+                    <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource BrandTeal}" FontWeight="Bold" Margin="0,0,0,8" TextWrapping="Wrap" FontSize="11" TextAlignment="Center" Height="28"/>
+                    
+                    <Button Content="Lookup UJP" Command="{Binding LookupCompanyCommand}" Style="{StaticResource PrimaryActionBtn}" Background="#E5E7EB" Foreground="#374151" Margin="0,0,0,12"/>
+                    
+                    <Button Content="Submit Invoice" Command="{Binding SubmitInvoiceCommand}" Style="{StaticResource PrimaryActionBtn}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" Background="White" CornerRadius="12" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.03" Direction="270" Color="Black"/>
+            </Border.Effect>
             
-            <Border Grid.Row="1" CornerRadius="8" ClipToBounds="True" Background="White" Margin="0,0,0,20">
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.05" Direction="270" Color="Black"/>
-                </Border.Effect>
-                
-                <DataGrid ItemsSource="{Binding InvoiceItems}" 
-                          AutoGenerateColumns="False" 
-                          CanUserAddRows="False">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <RowDefinition Height="*"/>    <RowDefinition Height="Auto"/> </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,12">
+                    <TextBlock Text="Line Items" FontSize="15" FontWeight="SemiBold" Foreground="#374151" VerticalAlignment="Center"/>
+                    <Button Content="+ Add New Line" Command="{Binding AddBlankItemCommand}" Background="Transparent" Foreground="{StaticResource BrandTeal}" FontWeight="SemiBold" HorizontalAlignment="Right" BorderThickness="0" Cursor="Hand"/>
+                </Grid>
+
+                <DataGrid Grid.Row="1" ItemsSource="{Binding InvoiceItems}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="0,0,0,16" BorderThickness="1" BorderBrush="#F3F4F6">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="#" Binding="{Binding LineNo}" IsReadOnly="True" Width="40"/>
-                        <DataGridTextColumn Header="Description" Binding="{Binding Desc, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
-                        <DataGridTextColumn Header="Qty" Binding="{Binding Qty, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
-                        <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice, UpdateSourceTrigger=PropertyChanged}" Width="100"/>
+                        <DataGridTextColumn Header="Item Name" Binding="{Binding Desc, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
                         
-                        <DataGridComboBoxColumn Header="DDV" 
-                                                SelectedItemBinding="{Binding TaxIndicator, UpdateSourceTrigger=PropertyChanged}" 
-                                                Width="90">
+                        <DataGridComboBoxColumn Header="DDV (%)" SelectedItemBinding="{Binding TaxIndicator, UpdateSourceTrigger=PropertyChanged}" Width="100">
                             <DataGridComboBoxColumn.ItemsSource>
                                 <x:Array Type="system:String" xmlns:system="clr-namespace:System;assembly=mscorlib">
                                     <system:String>18%</system:String>
@@ -128,52 +129,34 @@
                             </DataGridComboBoxColumn.ItemsSource>
                         </DataGridComboBoxColumn>
 
-                        <DataGridTextColumn Header="Total" Binding="{Binding RowGrossTotal, StringFormat={}{0:N2}}" IsReadOnly="True" Width="100"/>
+                        <DataGridTextColumn Header="Qty" Binding="{Binding Qty, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+                        <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
+                        <DataGridTextColumn Header="Row Total" Binding="{Binding RowGrossTotal, StringFormat={}{0:N2}}" IsReadOnly="True" Width="120"/>
                     </DataGrid.Columns>
                 </DataGrid>
-            </Border>
 
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" /> 
-                    <ColumnDefinition Width="Auto" /> 
-                </Grid.ColumnDefinitions>
-
-                <Button Content="+ Add Item" 
-                        Command="{Binding AddBlankItemCommand}" 
-                        Style="{StaticResource PrimaryActionBtn}"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Grid.Column="0"/>
-
-                <Grid Grid.Column="1" Margin="20,0,0,0" Background="White" >
-                    <Border CornerRadius="8" Padding="20">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="120" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Text="Subtotal:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,15,10" Foreground="#6C757D"/>
-                            <TextBlock Text="{Binding NetAmount, StringFormat={}{0:N2} MKD}" Grid.Row="0" Grid.Column="1" FontWeight="SemiBold" HorizontalAlignment="Right" Margin="0,0,0,10"/>
-
-                            <TextBlock Text="VAT:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,15,15" Foreground="#6C757D"/>
-                            <TextBlock Text="{Binding VatAmount, StringFormat={}{0:N2} MKD}" Grid.Row="1" Grid.Column="1" FontWeight="SemiBold" HorizontalAlignment="Right" Margin="0,0,0,15"/>
-
-                            <Separator Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="0,0,0,-5" Background="#E9ECEF"/>
-
-                            <TextBlock Text="TOTAL:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="0,15,15,0" Style="{StaticResource EmphasizedText}" FontSize="16"/>
-                            <TextBlock Text="{Binding GrossAmount, StringFormat={}{0:N2} MKD}" Grid.Row="2" Grid.Column="1" Style="{StaticResource EmphasizedText}" FontSize="16" HorizontalAlignment="Right" Margin="0,15,0,0"/>
+                <Grid Grid.Row="2">
+                    <StackPanel HorizontalAlignment="Right" Width="260">
+                        <Grid Margin="0,0,0,8">
+                            <TextBlock Text="Subtotal:" Foreground="#6B7280" FontSize="13"/>
+                            <TextBlock Text="{Binding NetAmount, StringFormat={}{0:N2} MKD}" FontWeight="SemiBold" Foreground="#495057" HorizontalAlignment="Right" FontSize="13"/>
                         </Grid>
-                    </Border>
+                        
+                        <Grid Margin="0,0,0,12">
+                            <TextBlock Text="Total DDV:" Foreground="#6B7280" FontSize="13"/>
+                            <TextBlock Text="{Binding VatAmount, StringFormat={}{0:N2} MKD}" FontWeight="SemiBold" Foreground="#495057" HorizontalAlignment="Right" FontSize="13"/>
+                        </Grid>
+                        
+                        <Rectangle Height="1" Fill="#E5E7EB" Margin="0,0,0,12"/>
+                        
+                        <Grid>
+                            <TextBlock Text="Full Price:" FontWeight="Bold" Foreground="#1F2937" FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding GrossAmount, StringFormat={}{0:N2} MKD}" FontWeight="Bold" Foreground="{StaticResource BrandTeal}" HorizontalAlignment="Right" FontSize="20"/>
+                        </Grid>
+                    </StackPanel>
                 </Grid>
             </Grid>
-        </Grid>
-
+        </Border>
+        
     </Grid>
 </UserControl>

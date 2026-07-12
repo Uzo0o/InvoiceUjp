@@ -229,9 +229,11 @@ public partial class InvoiceViewModel : ObservableObject
                     vatTaxIndicator = group.Key,
                     vatCode = group.Key,
                     vatPercent = group.Key == "DDV-A" ? 18.0m : (group.Key == "DDV-B" ? 5.0m : 0.0m),
-                    vatTaxableAmount = group.Sum(i => i.RowNetTotal),
-                    vatAmount = group.Sum(i => i.RowVatAmount),
-                    vatTotalAmount = group.Sum(i => i.RowGrossTotal)
+                    
+                    // FIX: Wrapped in Math.Round(..., 2)
+                    vatTaxableAmount = Math.Round(group.Sum(i => i.RowNetTotal), 2),
+                    vatAmount = Math.Round(group.Sum(i => i.RowVatAmount), 2),
+                    vatTotalAmount = Math.Round(group.Sum(i => i.RowGrossTotal), 2)
                 }).ToArray();
             
             RecalculateTotals();
@@ -295,26 +297,27 @@ public partial class InvoiceViewModel : ObservableObject
                         docItemSku = "SKU-" + item.LineNo,
                         docItemDesc = item.Desc,
                         docItemMUnit = "pcs",
-                        docItemQty = item.Qty,
+                        docItemQty = Math.Round(item.Qty, 3), 
                         
-                        docItemUnitOriginalPriceWoVat = item.UnitPrice,
+                        docItemUnitOriginalPriceWoVat = Math.Round(item.UnitPrice, 2),
                         docItemUnitDiscountAmount = 0, 
-                        docItemUnitPriceWoVat = item.UnitPrice,
+                        docItemUnitPriceWoVat = Math.Round(item.UnitPrice, 2),
                         
-                        docItemUnitVat = item.RowVatAmount > 0 ? (item.RowVatAmount / item.Qty) : 0,
-                        docItemVat = item.RowVatAmount > 0 ? (item.RowVatAmount / item.Qty) : 0,
+                        // THE CRITICAL FIX: 
+                        // UJP expects the Tax PERCENTAGE here (18.0, 5.0, 0.0), NOT the currency amount!
+                        docItemUnitVat = item.TaxIndicator == "18%" ? 18.0m : (item.TaxIndicator == "5%" ? 5.0m : 0.0m),
+                        docItemVat = item.TaxIndicator == "18%" ? 18.0m : (item.TaxIndicator == "5%" ? 5.0m : 0.0m),
                         
-                        // Use the translator here!
                         docItemVatGroup = GetApiTaxCode(item.TaxIndicator),
                         
-                        docItemTotalOriginalPriceWoVat = item.RowNetTotal,
-                        docItemTotalPriceWoVat = item.RowNetTotal,
-                        docItemTotalVat = item.RowVatAmount,
-                        docItemTotalPriceWVat = item.RowGrossTotal,
+                        docItemTotalOriginalPriceWoVat = Math.Round(item.RowNetTotal, 2),
+                        docItemTotalPriceWoVat = Math.Round(item.RowNetTotal, 2),
                         
-                        // Use the translator here!
+                        // THIS is where the actual currency amount goes
+                        docItemTotalVat = Math.Round(item.RowVatAmount, 2), 
+                        
+                        docItemTotalPriceWVat = Math.Round(item.RowGrossTotal, 2),
                         docItemTaxIndicator = GetApiTaxCode(item.TaxIndicator),
-                        
                         docItemDomesticProduct = (string)null 
                     }).ToArray(),
                     docTotals = new
