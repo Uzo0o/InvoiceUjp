@@ -9,7 +9,11 @@
         AllowsTransparency="True" 
         Background="Transparent"
         ResizeMode="CanResize"
-        FontFamily="{StaticResource Poppins}"> 
+        FontFamily="{StaticResource Poppins}"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"> 
 
     <Window.Resources>
         <Style x:Key="SidebarTabStyle" TargetType="RadioButton">
@@ -38,8 +42,8 @@
                         
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="MainBorder" Property="Background" Value="#D4FDFF"/>
-                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#69E2E8"/> <Setter TargetName="BtnText" Property="Foreground" Value="#479A9E"/>     <Setter TargetName="IconBox" Property="Background" Value="#69E2E8"/>     <Setter TargetName="IconPath" Property="Fill" Value="White"/>            </Trigger>
+                                <Setter TargetName="MainBorder" Property="Background" Value="#E1EBF9"/>
+                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#1B3A6B"/> <Setter TargetName="BtnText" Property="Foreground" Value="#479A9E"/>     <Setter TargetName="IconBox" Property="Background" Value="#69E2E8"/>     <Setter TargetName="IconPath" Property="Fill" Value="White"/>            </Trigger>
                             
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
@@ -75,7 +79,7 @@
         </Style>
 
         <Style x:Key="CyanWindowBtnStyle" TargetType="Button" BasedOn="{StaticResource WindowControlBtnStyle}">
-            <Setter Property="Background" Value="#69E2E8"/>
+            <Setter Property="Background" Value="#1B3A6B"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#4CD3DA"/> </Trigger>
@@ -154,7 +158,7 @@
                     </Border>
                 </Grid>
 
-                <Grid Grid.Row="1" Background="#D4FDFF">
+                <Grid Grid.Row="1" Background="#E1EBF9">
                     <views:InvoiceEntryView />
                 </Grid>
                 

@@ -298,25 +298,24 @@ public partial class InvoiceViewModel : ObservableObject
                         docItemDesc = item.Desc,
                         docItemMUnit = "pcs",
                         docItemQty = Math.Round(item.Qty, 3), 
-                        
+    
                         docItemUnitOriginalPriceWoVat = Math.Round(item.UnitPrice, 2),
-                        docItemUnitDiscountAmount = 0, 
+                        docItemUnitDiscountAmount = 0m, 
                         docItemUnitPriceWoVat = Math.Round(item.UnitPrice, 2),
-                        
-                        // THE CRITICAL FIX: 
-                        // UJP expects the Tax PERCENTAGE here (18.0, 5.0, 0.0), NOT the currency amount!
+    
+                        // UJP requires these as percentages (18.0, 5.0, 0.0)
                         docItemUnitVat = item.TaxIndicator == "18%" ? 18.0m : (item.TaxIndicator == "5%" ? 5.0m : 0.0m),
                         docItemVat = item.TaxIndicator == "18%" ? 18.0m : (item.TaxIndicator == "5%" ? 5.0m : 0.0m),
-                        
+    
                         docItemVatGroup = GetApiTaxCode(item.TaxIndicator),
-                        
+    
                         docItemTotalOriginalPriceWoVat = Math.Round(item.RowNetTotal, 2),
                         docItemTotalPriceWoVat = Math.Round(item.RowNetTotal, 2),
-                        
-                        // THIS is where the actual currency amount goes
+    
+                        // THESE must be formatted to 2 decimal places to avoid "error greater than threshold"
                         docItemTotalVat = Math.Round(item.RowVatAmount, 2), 
-                        
                         docItemTotalPriceWVat = Math.Round(item.RowGrossTotal, 2),
+    
                         docItemTaxIndicator = GetApiTaxCode(item.TaxIndicator),
                         docItemDomesticProduct = (string)null 
                     }).ToArray(),
