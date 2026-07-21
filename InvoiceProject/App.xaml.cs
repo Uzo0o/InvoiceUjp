@@ -21,7 +21,7 @@ public partial class App : Application
         AppHost = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((context, builder) => 
             {
-                builder.AddJsonFile("appsettings.json", optional: false);
+                builder.AddJsonFile("appsettings.json", optional: true);
             })
             .ConfigureServices((context, services) =>
             {
