@@ -16,42 +16,75 @@
         TextOptions.TextRenderingMode="ClearType"> 
 
     <Window.Resources>
+        <!-- MASTER SIDEBAR BUTTON STYLE WITH ANIMATION -->
         <Style x:Key="SidebarTabStyle" TargetType="RadioButton">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="Black"/> <Setter Property="Height" Value="54"/>
+            <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+            <Setter Property="Height" Value="54"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="BorderBrush" Value="Transparent"/> <Setter Property="BorderThickness" Value="0,0,4,0"/> <Setter Property="Template">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
-                        <Border x:Name="MainBorder" 
-                                Background="{TemplateBinding Background}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid Background="Transparent">
                             
+                            <!-- The Animated Selection Background (Scales from Left to Right) -->
+                            <Border x:Name="ActiveBg" Background="{StaticResource BrandBackground}" RenderTransformOrigin="0,0.5" Opacity="0">
+                                <Border.RenderTransform>
+                                    <ScaleTransform ScaleX="0" ScaleY="1"/>
+                                </Border.RenderTransform>
+                            </Border>
+
+                            <!-- The Left Side Colored Accent Line -->
+                            <Border x:Name="ActiveLine" Width="4" Background="{StaticResource BrandAccent}" HorizontalAlignment="Left" RenderTransformOrigin="0,0.5" Opacity="0">
+                                <Border.RenderTransform>
+                                    <ScaleTransform ScaleX="1" ScaleY="0"/>
+                                </Border.RenderTransform>
+                            </Border>
+
                             <StackPanel Orientation="Horizontal" Margin="25,0,0,0">
-                                
-                                <Border x:Name="IconBox" Width="32" Height="32" CornerRadius="8" Background="#E9ECEF" VerticalAlignment="Center">
-                                    <Path x:Name="IconPath" Data="{TemplateBinding Tag}" Stretch="Uniform" Fill="Black" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Border x:Name="IconBox" Width="32" Height="32" CornerRadius="8" VerticalAlignment="Center" Background="Transparent">
+                                    <Path x:Name="IconPath" Data="{TemplateBinding Tag}" Stretch="Uniform" Fill="{StaticResource TextMuted}" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
-                                
                                 <TextBlock x:Name="BtnText" Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" Margin="15,0,0,0"/>
-                                
                             </StackPanel>
-                        </Border>
-                        
+                        </Grid>
+
                         <ControlTemplate.Triggers>
+                            <!-- USING A SAFE PROPERTY TRIGGER INSTEAD OF EVENT TRIGGERS -->
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="MainBorder" Property="Background" Value="#E1EBF9"/>
-                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#1B3A6B"/> <Setter TargetName="BtnText" Property="Foreground" Value="#479A9E"/>     <Setter TargetName="IconBox" Property="Background" Value="#69E2E8"/>     <Setter TargetName="IconPath" Property="Fill" Value="White"/>            </Trigger>
-                            
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsMouseOver" Value="True"/>
-                                    <Condition Property="IsChecked" Value="False"/>
-                                </MultiTrigger.Conditions>
-                                <Setter TargetName="MainBorder" Property="Background" Value="#F8F9FA"/>
-                            </MultiTrigger>
+                                <!-- ANIMATE IN -->
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ActiveBg" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.25">
+                                                <DoubleAnimation.EasingFunction><QuadraticEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="ActiveBg" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.1"/>
+                                            
+                                            <DoubleAnimation Storyboard.TargetName="ActiveLine" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.25"/>
+                                            <DoubleAnimation Storyboard.TargetName="ActiveLine" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.1"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                
+                                <!-- ANIMATE OUT -->
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ActiveBg" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="0" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="ActiveBg" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="ActiveLine" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="0" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="ActiveLine" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+
+                                <!-- COLOR CHANGES -->
+                                <Setter TargetName="BtnText" Property="Foreground" Value="{StaticResource BrandPrimary}"/>
+                                <Setter TargetName="IconPath" Property="Fill" Value="{StaticResource BrandAccent}"/>
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>

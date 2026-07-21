@@ -27,4 +27,43 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Assets\Fonts\Poppins-Black.ttf" />
+      <Resource Include="Assets\Fonts\Poppins-Black.ttf">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Fonts\Poppins-Bold.ttf" />
+      <Resource Include="Assets\Fonts\Poppins-Bold.ttf">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Fonts\Poppins-ExtraBold.ttf" />
+      <Resource Include="Assets\Fonts\Poppins-ExtraBold.ttf">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Fonts\Poppins-ExtraLight.ttf" />
+      <Resource Include="Assets\Fonts\Poppins-ExtraLight.ttf">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Fonts\Poppins-Light.ttf" />
+      <Resource Include="Assets\Fonts\Poppins-Light.ttf">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Fonts\Poppins-Medium.ttf" />
+      <Resource Include="Assets\Fonts\Poppins-Medium.ttf">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Fonts\Poppins-Regular.ttf" />
+      <Resource Include="Assets\Fonts\Poppins-Regular.ttf">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Fonts\Poppins-SemiBold.ttf" />
+      <Resource Include="Assets\Fonts\Poppins-SemiBold.ttf">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Fonts\Poppins-Thin.ttf" />
+      <Resource Include="Assets\Fonts\Poppins-Thin.ttf">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
+    </ItemGroup>
+
 </Project>

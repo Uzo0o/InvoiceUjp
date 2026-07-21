@@ -5,25 +5,43 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="720" d:DesignWidth="1050"
-             Background="Transparent">
+             Background="Transparent"
+             UseLayoutRounding="True"
+             SnapsToDevicePixels="True"
+             TextOptions.TextFormattingMode="Ideal"
+             TextOptions.TextRenderingMode="ClearType"
+             FontFamily="{StaticResource Poppins}"
+             >
 
     <Grid Margin="24">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/> <RowDefinition Height="*"/>    </Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> 
+            <RowDefinition Height="Auto"/> 
+            <RowDefinition Height="*"/>    
+        </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Create Invoice" FontSize="22" FontWeight="Bold" Foreground="#1F2937" Margin="0,0,0,16"/>
+        <!-- PAGE TITLE uses the new global style! -->
+        <TextBlock Grid.Row="0" Text="Create Invoice" Style="{StaticResource PageTitleStyle}"/>
 
-        <Border Grid.Row="1" Background="White" CornerRadius="12" Padding="20" Margin="0,0,0,20">
+        <!-- ============================================================== -->
+        <!-- TOP CARD -->
+        <!-- ============================================================== -->
+        <Border Grid.Row="1" Background="{StaticResource SurfaceWhite}" CornerRadius="12" Padding="20" Margin="0,0,0,20">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.03" Direction="270" Color="Black"/>
             </Border.Effect>
             
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2.5*"/> <ColumnDefinition Width="3.5*"/> <ColumnDefinition Width="1*"/>   </Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2.5*"/> 
+                    <ColumnDefinition Width="3.5*"/> 
+                    <ColumnDefinition Width="1*"/>   
+                </Grid.ColumnDefinitions>
 
+                <!-- 1. DOCUMENT DETAILS -->
                 <StackPanel Grid.Column="0" Margin="0,0,24,0">
-                    <TextBlock Text="Document Details" FontSize="15" FontWeight="SemiBold" Foreground="#374151" Margin="0,0,0,12"/>
+                    <!-- CARD HEADER uses the new global style! -->
+                    <TextBlock Text="Document Details" Style="{StaticResource CardHeaderStyle}"/>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -34,13 +52,14 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
+                        <!-- Inputs use the new BorderLight color -->
                         <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,12,12">
                             <Label Content="Invoice No."/>
-                            <TextBox Text="{Binding InvoiceNumber, UpdateSourceTrigger=PropertyChanged}" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="1"/>
+                            <TextBox Text="{Binding InvoiceNumber, UpdateSourceTrigger=PropertyChanged}" Background="#F8FAFC" BorderBrush="{StaticResource BorderLight}" BorderThickness="1"/>
                         </StackPanel>
                         <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,12">
                             <Label Content="Doc Type"/>
-                            <ComboBox SelectedValuePath="Tag" SelectedValue="{Binding SelectedDocumentType}" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="1">
+                            <ComboBox SelectedValuePath="Tag" SelectedValue="{Binding SelectedDocumentType}" Background="#F8FAFC" BorderBrush="{StaticResource BorderLight}" BorderThickness="1">
                                 <ComboBoxItem Content="100" Tag="100" IsSelected="True"/>
                                 <ComboBoxItem Content="380" Tag="380"/>
                                 <ComboBoxItem Content="383" Tag="383"/>
@@ -58,8 +77,10 @@
                     </Grid>
                 </StackPanel>
 
+                <!-- 2. BUYER INFORMATION -->
                 <StackPanel Grid.Column="1" Margin="0,0,24,0">
-                    <TextBlock Text="Buyer Information" FontSize="15" FontWeight="SemiBold" Foreground="#374151" Margin="0,0,0,12"/>
+                    <!-- CARD HEADER -->
+                    <TextBlock Text="Buyer Information" Style="{StaticResource CardHeaderStyle}"/>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -73,49 +94,58 @@
 
                         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,12,12">
                             <Label Content="Select Saved Client"/>
-                            <ComboBox ItemsSource="{Binding AllClients}" SelectedItem="{Binding SelectedClient}" DisplayMemberPath="Name" IsEditable="True" IsTextSearchEnabled="True" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="1"/>
+                            <ComboBox ItemsSource="{Binding AllClients}" SelectedItem="{Binding SelectedClient}" DisplayMemberPath="Name" IsEditable="True" IsTextSearchEnabled="True" Background="#F8FAFC" BorderBrush="{StaticResource BorderLight}" BorderThickness="1"/>
                         </StackPanel>
                         <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,12">
                             <Label Content="EDB (Tax No.)"/>
-                            <TextBox Text="{Binding BuyerEdb, UpdateSourceTrigger=PropertyChanged}" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="1"/>
+                            <TextBox Text="{Binding BuyerEdb, UpdateSourceTrigger=PropertyChanged}" Background="#F8FAFC" BorderBrush="{StaticResource BorderLight}" BorderThickness="1"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,12,0">
                             <Label Content="Official Name"/>
-                            <TextBox Text="{Binding BuyerName}" IsReadOnly="True" Background="#F3F4F6" BorderBrush="#E5E7EB" BorderThickness="1"/>
+                            <TextBox Text="{Binding BuyerName}" IsReadOnly="True" Background="#F1F5F9" BorderBrush="{StaticResource BorderLight}" BorderThickness="1"/>
                         </StackPanel>
                         <StackPanel Grid.Row="1" Grid.Column="2">
                             <Label Content="City"/>
-                            <TextBox Text="{Binding SelectedClient.City}" IsReadOnly="True" Background="#F3F4F6" BorderBrush="#E5E7EB" BorderThickness="1"/>
+                            <TextBox Text="{Binding SelectedClient.City}" IsReadOnly="True" Background="#F1F5F9" BorderBrush="{StaticResource BorderLight}" BorderThickness="1"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
 
+                <!-- 3. ACTIONS -->
                 <StackPanel Grid.Column="2" VerticalAlignment="Bottom">
-                    <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource BrandTeal}" FontWeight="Bold" Margin="0,0,0,8" TextWrapping="Wrap" FontSize="11" TextAlignment="Center" Height="28"/>
+                    <!-- STATUS MESSAGE: Changed from Teal to Success Green -->
+                    <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource BrandSuccess}" FontWeight="Bold" Margin="0,0,0,8" TextWrapping="Wrap" FontSize="11" TextAlignment="Center" Height="28"/>
                     
-                    <Button Content="Lookup UJP" Command="{Binding LookupCompanyCommand}" Style="{StaticResource PrimaryActionBtn}" Background="#E5E7EB" Foreground="#374151" Margin="0,0,0,12"/>
-                    
+                    <Button Content="Lookup UJP" Command="{Binding LookupCompanyCommand}" Style="{StaticResource PrimaryActionBtn}" Background="{StaticResource BorderLight}" Foreground="{StaticResource BrandText}" Margin="0,0,0,12"/>
                     <Button Content="Submit Invoice" Command="{Binding SubmitInvoiceCommand}" Style="{StaticResource PrimaryActionBtn}"/>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <Border Grid.Row="2" Background="White" CornerRadius="12" Padding="20">
+        <!-- ============================================================== -->
+        <!-- BOTTOM CARD -->
+        <!-- ============================================================== -->
+        <Border Grid.Row="2" Background="{StaticResource SurfaceWhite}" CornerRadius="12" Padding="20">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.03" Direction="270" Color="Black"/>
             </Border.Effect>
             
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/> <RowDefinition Height="*"/>    <RowDefinition Height="Auto"/> </Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> 
+                    <RowDefinition Height="*"/>    
+                    <RowDefinition Height="Auto"/> 
+                </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0" Margin="0,0,0,12">
-                    <TextBlock Text="Line Items" FontSize="15" FontWeight="SemiBold" Foreground="#374151" VerticalAlignment="Center"/>
-                    <Button Content="+ Add New Line" Command="{Binding AddBlankItemCommand}" Background="Transparent" Foreground="{StaticResource BrandTeal}" FontWeight="SemiBold" HorizontalAlignment="Right" BorderThickness="0" Cursor="Hand"/>
+                    <TextBlock Text="Line Items" Style="{StaticResource CardHeaderStyle}" Margin="0"/>
+                    
+                    <!-- ADD BUTTON: Changed from Teal to Accent Blue -->
+                    <Button Content="+ Add New Line" Command="{Binding AddBlankItemCommand}" Background="Transparent" Foreground="{StaticResource BrandAccent}" FontWeight="SemiBold" HorizontalAlignment="Right" BorderThickness="0" Cursor="Hand"/>
                 </Grid>
 
-                <DataGrid Grid.Row="1" ItemsSource="{Binding InvoiceItems}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="0,0,0,16" BorderThickness="1" BorderBrush="#F3F4F6">
+                <DataGrid Grid.Row="1" ItemsSource="{Binding InvoiceItems}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="0,0,0,16" BorderThickness="1" BorderBrush="{StaticResource BorderLight}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Item Name" Binding="{Binding Desc, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
                         
@@ -135,28 +165,30 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
+                <!-- Totals Footer -->
                 <Grid Grid.Row="2">
                     <StackPanel HorizontalAlignment="Right" Width="260">
                         <Grid Margin="0,0,0,8">
-                            <TextBlock Text="Subtotal:" Foreground="#6B7280" FontSize="13"/>
-                            <TextBlock Text="{Binding NetAmount, StringFormat={}{0:N2} MKD}" FontWeight="SemiBold" Foreground="#495057" HorizontalAlignment="Right" FontSize="13"/>
+                            <TextBlock Text="Subtotal:" Foreground="{StaticResource TextMuted}" FontSize="13"/>
+                            <TextBlock Text="{Binding NetAmount, StringFormat={}{0:N2} MKD}" FontWeight="SemiBold" Foreground="{StaticResource BrandText}" HorizontalAlignment="Right" FontSize="13"/>
                         </Grid>
                         
                         <Grid Margin="0,0,0,12">
-                            <TextBlock Text="Total DDV:" Foreground="#6B7280" FontSize="13"/>
-                            <TextBlock Text="{Binding VatAmount, StringFormat={}{0:N2} MKD}" FontWeight="SemiBold" Foreground="#495057" HorizontalAlignment="Right" FontSize="13"/>
+                            <TextBlock Text="Total DDV:" Foreground="{StaticResource TextMuted}" FontSize="13"/>
+                            <TextBlock Text="{Binding VatAmount, StringFormat={}{0:N2} MKD}" FontWeight="SemiBold" Foreground="{StaticResource BrandText}" HorizontalAlignment="Right" FontSize="13"/>
                         </Grid>
                         
-                        <Rectangle Height="1" Fill="#E5E7EB" Margin="0,0,0,12"/>
+                        <Rectangle Height="1" Fill="{StaticResource BorderLight}" Margin="0,0,0,12"/>
                         
                         <Grid>
-                            <TextBlock Text="Full Price:" FontWeight="Bold" Foreground="#1F2937" FontSize="16" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding GrossAmount, StringFormat={}{0:N2} MKD}" FontWeight="Bold" Foreground="{StaticResource BrandTeal}" HorizontalAlignment="Right" FontSize="20"/>
+                            <TextBlock Text="Full Price:" FontWeight="Bold" Foreground="{StaticResource BrandPrimary}" FontSize="16" VerticalAlignment="Center"/>
+                            
+                            <!-- FINAL TOTAL: Changed from Teal to Accent Blue -->
+                            <TextBlock Text="{Binding GrossAmount, StringFormat={}{0:N2} MKD}" FontWeight="Bold" Foreground="{StaticResource BrandAccent}" HorizontalAlignment="Right" FontSize="20"/>
                         </Grid>
                     </StackPanel>
                 </Grid>
             </Grid>
         </Border>
-        
     </Grid>
 </UserControl>

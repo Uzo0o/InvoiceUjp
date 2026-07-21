@@ -8,34 +8,59 @@
                 <ResourceDictionary Source="Resources/Icons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             
-            <FontFamily x:Key="Poppins">pack://application:,,,/Assets/Fonts/#Poppins</FontFamily>
+            <FontFamily x:Key="Poppins">pack://application:,,,/InvoiceProject;component/Assets/Fonts/#Poppins</FontFamily>
 
-            <SolidColorBrush x:Key="BrandCyan" Color="#2E86FF"/>
-            <SolidColorBrush x:Key="BrandTeal" Color="#1A1A2E"/>
-            <SolidColorBrush x:Key="BrandBg" Color="#2E86FF"/>
+            <!-- ========================================== -->
+            <!-- 1. COLORS                                  -->
+            <!-- ========================================== -->
+            <SolidColorBrush x:Key="BrandPrimary" Color="#1B3A6B"/> 
+            <SolidColorBrush x:Key="BrandAccent" Color="#2E86FF"/> 
+            <SolidColorBrush x:Key="BrandBackground" Color="#F4F7FC"/> 
+            <SolidColorBrush x:Key="BrandText" Color="#1A1A2E"/> 
+            <SolidColorBrush x:Key="BrandSuccess" Color="#00B894"/> 
+            <SolidColorBrush x:Key="BrandDanger" Color="#FF4757"/> 
+            <SolidColorBrush x:Key="SurfaceWhite" Color="#FFFFFF"/> 
+            <SolidColorBrush x:Key="BorderLight" Color="#E2E8F0"/> 
+            <SolidColorBrush x:Key="TextMuted" Color="#64748B"/> 
+
+            <!-- ========================================== -->
+            <!-- 2. TYPOGRAPHY                              -->
+            <!-- ========================================== -->
+            <Style TargetType="TextBlock" x:Key="PageTitleStyle">
+                <Setter Property="Foreground" Value="{StaticResource BrandText}"/>
+                <Setter Property="FontSize" Value="24"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Margin" Value="0,0,0,20"/>
+            </Style>
+
+            <Style TargetType="TextBlock" x:Key="CardHeaderStyle">
+                <Setter Property="Foreground" Value="{StaticResource BrandPrimary}"/>
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Margin" Value="0,0,0,16"/>
+            </Style>
 
             <Style TargetType="Label">
-                <Setter Property="Foreground" Value="{StaticResource BrandTeal}"/>
+                <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Padding" Value="0,0,0,5"/>
-                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="Padding" Value="0,0,0,4"/>
             </Style>
 
-            <Style TargetType="TextBlock" x:Key="EmphasizedText">
-                <Setter Property="Foreground" Value="{StaticResource BrandTeal}"/>
-                <Setter Property="FontWeight" Value="Bold"/>
-            </Style>
-
+            <!-- ========================================== -->
+            <!-- 3. INPUTS (TextBox)                        -->
+            <!-- ========================================== -->
             <Style TargetType="TextBox">
-                <Setter Property="Background" Value="#F4F7FC"/>
-                <Setter Property="Foreground" Value="#212529"/>
+                <Setter Property="Background" Value="#F8FAFC"/>
+                <Setter Property="Foreground" Value="{StaticResource BrandText}"/>
                 <Setter Property="Padding" Value="12,10"/>
-                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BorderLight}"/>
                 <Setter Property="FontSize" Value="13"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="TextBox">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
                                 <ScrollViewer x:Name="PART_ContentHost" Margin="0"/>
                             </Border>
                         </ControlTemplate>
@@ -43,101 +68,31 @@
                 </Setter>
             </Style>
 
-            <Style TargetType="Button" x:Key="PrimaryActionBtn">
-                <Setter Property="Background" Value="{StaticResource BrandCyan}"/>
-                <Setter Property="Foreground" Value="#F4F7FC"/>
-                <Setter Property="Height" Value="42"/> <Setter Property="FontSize" Value="14"/> <Setter Property="FontWeight" Value="Bold"/>
-                <Setter Property="Padding" Value="24,0"/> <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="Cursor" Value="Hand"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="6"> <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#2E86FF"/> 
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-
-            <Style TargetType="DatePicker">
-                <Setter Property="Background" Value="#F4F7FC"/>
-                <Setter Property="Height" Value="42"/> <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="DatePicker">
-                            <Border Background="{TemplateBinding Background}" 
-                                    CornerRadius="6">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    
-                                    <DatePickerTextBox x:Name="PART_TextBox" Grid.Column="0" 
-                                                       HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                                                       Margin="12,0,0,0" 
-                                                       Background="Transparent" BorderThickness="0" />
-                                    
-                                    <Button x:Name="PART_Button" Grid.Column="1" Width="40" Background="Transparent" BorderThickness="0">
-                                        <Path Data="{StaticResource Calendar}" Fill="{StaticResource BrandTeal}" Width="16" Height="16" Stretch="Uniform"/>
-                                    </Button>
-                                    <Popup x:Name="PART_Popup" AllowsTransparency="True" Placement="Bottom" StaysOpen="False" />
-                                </Grid>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
-            <Style TargetType="DataGrid">
-                <Setter Property="Background" Value="White"/>
-                <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="RowBackground" Value="White"/>
-                <Setter Property="GridLinesVisibility" Value="None"/> <Setter Property="HeadersVisibility" Value="Column"/>
-                <Setter Property="RowHeight" Value="40"/>
-                <Setter Property="AutoGenerateColumns" Value="False"/>
-            </Style>
-
-            <Style TargetType="DataGridColumnHeader">
-                <Setter Property="Background" Value="White"/>
-                <Setter Property="Foreground" Value="{StaticResource BrandCyan}"/>
-                <Setter Property="FontWeight" Value="Bold"/>
-                <Setter Property="Padding" Value="10,10,10,10"/>
-                <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                <Setter Property="BorderBrush" Value="#E9ECEF"/> </Style>
-
+            <!-- ========================================== -->
+            <!-- 4. COMBOBOX                                -->
+            <!-- ========================================== -->
             <Style TargetType="ComboBox">
-                <Setter Property="Background" Value="White"/>
-                <Setter Property="Foreground" Value="#212529"/>
-                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="#F8FAFC"/>
+                <Setter Property="Foreground" Value="{StaticResource BrandText}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BorderLight}"/>
                 <Setter Property="Padding" Value="12,10"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ComboBox">
                             <Grid>
-                                <Border Background="{TemplateBinding Background}" CornerRadius="6"/>
-                                
+                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6"/>
                                 <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press">
                                     <ToggleButton.Template>
                                         <ControlTemplate TargetType="ToggleButton">
                                             <Border Background="Transparent">
-                                                <Path Data="{StaticResource Dropdown}" 
-                                                      Fill="{StaticResource BrandTeal}" 
-                                                      Width="10" Height="10" 
-                                                      Stretch="Uniform" 
-                                                      HorizontalAlignment="Right" 
-                                                      Margin="0,0,12,0"/>
+                                                <!-- UPDATED: Replaced missing BrandTeal with BrandPrimary -->
+                                                <Path Data="{StaticResource Dropdown}" Fill="{StaticResource BrandPrimary}" Width="10" Height="10" Stretch="Uniform" HorizontalAlignment="Right" Margin="0,0,12,0"/>
                                             </Border>
                                         </ControlTemplate>
                                     </ToggleButton.Template>
                                 </ToggleButton>
-                                
                                 <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="12,10,30,10" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                
                                 <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
                                     <Border x:Name="DropDownBorder" Background="White" CornerRadius="6" Margin="0,5,0,0">
                                         <Border.Effect>
@@ -153,7 +108,109 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            
+
+            <!-- ========================================== -->
+            <!-- 5. DATEPICKER                              -->
+            <!-- ========================================== -->
+            <Style TargetType="DatePicker">
+                <Setter Property="Background" Value="#F8FAFC"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BorderLight}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Foreground" Value="{StaticResource BrandText}"/>
+                <Setter Property="Height" Value="42"/> 
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="DatePicker">
+                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <DatePickerTextBox x:Name="PART_TextBox" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="12,0,0,0" Background="Transparent" BorderThickness="0" />
+                                    <Button x:Name="PART_Button" Grid.Column="1" Width="40" Background="Transparent" BorderThickness="0">
+                                        <!-- UPDATED: Replaced missing BrandTeal with BrandPrimary -->
+                                        <Path Data="{StaticResource Calendar}" Fill="{StaticResource BrandPrimary}" Width="16" Height="16" Stretch="Uniform"/>
+                                    </Button>
+                                    <Popup x:Name="PART_Popup" AllowsTransparency="True" Placement="Bottom" StaysOpen="False" />
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- ========================================== -->
+            <!-- 6. BUTTON (With Levitation Hover)          -->
+            <!-- ========================================== -->
+            <Style TargetType="Button" x:Key="PrimaryActionBtn">
+                <Setter Property="Background" Value="{StaticResource BrandAccent}"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Height" Value="42"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Padding" Value="24,0"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="BtnBorder" Background="{TemplateBinding Background}" CornerRadius="6">
+                                <Border.RenderTransform>
+                                    <TranslateTransform Y="0"/>
+                                </Border.RenderTransform>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <EventTrigger RoutedEvent="MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="BtnBorder" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#1B3A6B" Duration="0:0:0.1"/>
+                                            <DoubleAnimation Storyboard.TargetName="BtnBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" To="-2" Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction><QuadraticEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="MouseLeave">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="BtnBorder" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="BtnBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" To="0" Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction><QuadraticEase EasingMode="EaseIn"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- ========================================== -->
+            <!-- 7. DATAGRID                                -->
+            <!-- ========================================== -->
+            <Style TargetType="DataGrid">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="RowBackground" Value="White"/>
+                <Setter Property="GridLinesVisibility" Value="None"/> 
+                <Setter Property="HeadersVisibility" Value="Column"/>
+                <Setter Property="RowHeight" Value="40"/>
+                <Setter Property="AutoGenerateColumns" Value="False"/>
+            </Style>
+
+            <Style TargetType="DataGridColumnHeader">
+                <Setter Property="Background" Value="White"/>
+                <!-- UPDATED: Replaced missing BrandCyan with TextMuted -->
+                <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Padding" Value="10,10,10,10"/>
+                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BorderLight}"/>
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
