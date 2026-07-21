@@ -1,6 +1,5 @@
 ﻿using System.Configuration;
 using System.Data;
-using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using InvoiceProject.Services;
 using InvoiceProject.ViewModels;
@@ -25,16 +24,11 @@ public partial class App : Application
             })
             .ConfigureServices((context, services) =>
             {
-                string certPath = context.Configuration["UjpSettings:CertPath"];
-                string certPass = context.Configuration["UjpSettings:CertPassword"];
-                var certificate = new X509Certificate2(certPath, certPass, X509KeyStorageFlags.Exportable);
-                
                 services.AddSingleton<SettingsWindow>();
                 services.AddSingleton<SettingsViewModel>();
                 
                 services.AddHttpClient<IUjpService, UjpService>();
                 
-                services.AddSingleton(certificate);
                 services.AddSingleton<IUserSettingsService, UserSettingsService>();
                 
                 services.AddSingleton<IDatabaseService, DatabaseService>();
